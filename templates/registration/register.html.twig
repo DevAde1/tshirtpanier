@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+
+    <div class="w-50 card p-5 rounded mx-auto">
+        <h1 class="text-center mb-3">Inscription</h1>
+        {{ form_errors(registrationForm) }}
+        {{ form_start(registrationForm) }}
+            <div class="row">
+                <div class="col-6">
+                    {{ form_row(registrationForm.pseudo) }}
+                </div>
+                <div class="col-6">
+                    {{ form_row(registrationForm.prenom) }}
+                </div>
+                <div class="col-6">
+                    {{ form_row(registrationForm.nom) }}
+                </div>
+                <div class="col-6">
+                    {{ form_row(registrationForm.email) }}
+                </div>
+                <div class="col-6">
+                    {{ form_row(registrationForm.plainPassword, {
+                        label: 'Password'
+                    }) }}
+                </div>
+                <div class="col-6">
+                    {{ form_row(registrationForm.civilite) }}
+                </div>
+                <div class="col-6">
+                    {{ form_row(registrationForm.agreeTerms) }}
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Register</button>
+        {{ form_end(registrationForm) }}
+    </div>
+</div>
+{% endblock %}

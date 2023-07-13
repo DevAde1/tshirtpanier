@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon panier{% endblock %}
+
+{% block body %}
+ <div class="container">
+    <h1 class="text-center my-4">Votre Panier</h1>
+    {% if items %}
+        <table class="table table-light">
+            <thead>
+                <tr class="text-center my-4">>
+                    <th>#</th>
+                    <th>Produit</th>
+                    <th>Quantité</th>
+                    <th>Montant</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                    <tr class="text-center my-4">>
+                        <td>{{ item.product.id }}</td>
+                        <td class="d-flex flex-column align-items-center">{{ item.product.titre}}
+                        <img src="{{ asset('assets/uploads/') ~ item.product.photo }}" alt="photo du produit" class="img-fluid" style="width: 100px;"></td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.product.prix * item.quantity/100 }}€</td>
+                        <td><a href="{{ path('cart_remove', {id: item.product.id})}}" class="btn-sm btn-danger">Supprimer</a></td>
+                    
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+        <div class="text-center my-3">
+            <a href="{{path('cart_add', {id: produit.id})}}" class="btn btn-primary">Ajouter au panier</a>
+        </div>
+        <h5 class="text-end">Total : {{ total/100 }}€</h5>
+    {% else %}
+    <p class="text-center">Votre panier est vide</p>
+    {% endif %}
+
+ </div>   
+{% endblock %}
