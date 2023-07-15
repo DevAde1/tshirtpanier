@@ -3,6 +3,13 @@
 {% block title %}Accueil{% endblock %}
 
 {% block body %}
+
+{% for flashMessage in app.flashes('success') %}
+    <div class="alert alert-success">
+        {{ flashMessage }}
+    </div>
+{% endfor %}
+
 <h2 class="text-center my-4">Les T-shirts</h2>
 <div class="container">
     <div class="row gx-2">
@@ -14,7 +21,9 @@
                         <img src="{{ asset('assets/uploads/') ~ produit.photo }}" alt="photo du produit" class="img-fluid">
                     </div>
                     <div class="card-body">
-                        <div class="text-end">{{ produit.prix/100}}€</div>
+                        <div class="text-end">Prix : {{ produit.prix/100}}€</div>
+                        <div class="text-end">Taille : {{ produit.taille}}</div>
+                        <div class="text-end">Collection : {{ produit.collection}}</div>
                         {% if app.user %}
                         <div class="text-center my-3">
                             <a href="{{path('cart_add', {id: produit.id})}}" class="btn btn-primary">Ajouter au panier</a>

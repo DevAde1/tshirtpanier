@@ -2,9 +2,16 @@
 
 namespace App\Controller;
 
+use App\Entity\Produit;
+use App\Entity\Commande;
+use App\Form\CommandeType;
 use App\Service\CartService;
+use App\Repository\CommandeRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class CartController extends AbstractController
@@ -42,7 +49,7 @@ class CartController extends AbstractController
     {
         $cs->add($id);
         // dd($session->get('cart'));
-        $this->addFlash('success', 'ajout du produit dans la panier');
+        $this->addFlash('success', 'ajout du produit dans le panier');
         return $this->redirectToRoute('home');
     }
 
@@ -52,4 +59,60 @@ class CartController extends AbstractController
         $cs->remove($id);
         return $this->redirectToRoute('app_cart');
     }
+
+
+    #[Route('/cart/achat', name: 'achat_tshirt')]
+public function achatTshirt(Request $request, EntityManagerInterface $entityManager, SessionInterface $session): Response
+{
+    $cartItems = $session->get('cart', []);
+
+    // Création de la commande
+    $commande = new Commande();
+    // Récupération de l'utilisateur courant
+    $user = $this->getUser();
+    $commande->setMembre($user);
+    $commande->setDateEnregistrement(new \DateTime());
+
+    $montantTotal = 0;
+
+    foreach ($cartItems as $id => $quantity) {
+        // Ajout des produits à la commande avec la quantité appropriée
+        $produit = $entityManager->getRepository(Produit::class)->find($id);
+        $commande->setProduit($produit)->setQuantite($quantity);
+
+        // Calcul du montant total en ajoutant le prix du produit multiplié par la quantité
+        $montantTotal += $produit->getPrix() * $quantity;
+    }
+
+    $commande->setMontant($montantTotal);
+    $commande->setEtat('En cours de traitement'); // Définition de l'état de la commande
+
+    // Persist et flush de la commande dans la base de données
+    $entityManager->persist($commande);
+    $entityManager->flush();
+
+    // Suppression du panier de la session
+    $session->remove('cart');
+
+    $this->addFlash('success', 'Votre commande a bien été enregistrée !');
+
+
+    // Redirection vers la page de profil
+    return $this->redirectToRoute('profil');
+}
+
+    
+    
+    
+     #[Route("/cart/profil", name:"profil")]
+    public function profil(CommandeRepository $repo)
+    {
+        $commandes = $repo->findBy(['membre' => $this->getUser()]);
+
+        return $this->render("cart/profil.html.twig", [
+            'commandes' => $commandes
+        ]);
+    }
+
+    
 }

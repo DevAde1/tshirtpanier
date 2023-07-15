@@ -3,6 +3,7 @@
 {% block title %}Mon panier{% endblock %}
 
 {% block body %}
+
  <div class="container">
     <h1 class="text-center my-4">Votre Panier</h1>
     {% if items %}
@@ -33,10 +34,12 @@
             </tbody>
 
         </table>
-        <div class="text-center my-3">
-            <a href="{{path('cart_add', {id: produit.id})}}" class="btn btn-primary">Ajouter au panier</a>
-        </div>
         <h5 class="text-end">Total : {{ total/100 }}€</h5>
+
+        <div class="text-center my-4">
+            <a href="{{ path('achat_tshirt') }}" class="btn btn-primary">Valider mon panier</a>
+        </div>
+
     {% else %}
     <p class="text-center">Votre panier est vide</p>
     {% endif %}
